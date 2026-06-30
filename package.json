@@ -1,0 +1,25 @@
+{
+  "name": "elevateos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:critical": "playwright test --grep @critical",
+    "test:high": "playwright test --grep @high",
+    "test:medium": "playwright test --grep @medium",
+    "test:ci": "playwright test --grep '@critical|@high'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
