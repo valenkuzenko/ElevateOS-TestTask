@@ -7,7 +7,7 @@ test.describe('Avatar Upload Validation', () => {
   test.describe('Valid formats', () => {
     // GIF test will fail. reported. to avoid test failure, GIF can be temporary excluded from the valid formats list.
     for (const { filePath, extension } of allValidAvatars()) {
-      test(`@critical Successful submission with valid avatar (${extension})`, async ({ registrationPage }) => {
+      test(`@medium Successful submission with valid avatar (${extension})`, async ({ registrationPage }) => {
         const user = randomUser();
         const successPage = await registrationPage.registerUser({ ...user, avatar: filePath, avatarExtension: extension });
 
