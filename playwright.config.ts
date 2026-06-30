@@ -7,6 +7,7 @@ if (!process.env.CI) {
 
 export default defineConfig({
   timeout: 120000,
+  retries: process.env.CI ? 2 : 0,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   workers: 2,

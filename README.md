@@ -104,7 +104,7 @@ tests/
 ├── page-objects/
 │   ├── registration.page.ts   # Page Object for the registration form
 │   └── success.page.ts        # Page Object for the success confirmation page
-├── critical-positive.spec.ts  # @critical — happy-path registration flows
+├── critical-positive.spec.ts  # @critical — happy-path registration flow
 ├── field-validation.spec.ts   # @critical, @high — required fields and input validation
 └── avatar-upload.spec.ts      # @medium — file upload edge cases
 ```
