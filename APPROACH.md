@@ -82,6 +82,8 @@ The `clickSubmit()` method handles both flows via flags:
 - `{ expectServerError: true }` — clicks and reads the error message from the DOM
 - No flags — clicks and waits for a `/success` response
 
+**Why we assert browser validation messages.** Messages like `"Please fill out this field."` or `"Please include an '@' in the email address."` come from Chromium, not from our application. They can change when the browser updates — and that's exactly why we assert them. These messages are what the end user sees. If Google changes the wording after a Chromium update, the team should know about it — because it affects the user experience even though it's not our code. When a test fails for this reason, the fix is straightforward: update the `ErrorMessage` enum, or implement custom validation messages in the application if the new browser wording doesn't meet UX requirements. We use `toContain()` instead of exact match because browser messages include dynamic parts (the actual input value), so we only check the stable portion to avoid unnecessary brittleness.
+
 ### Parameterized avatar tests
 
 The application accepts `.jpg`, `.png`, `.jpeg`, `.gif`, and `.bmp` uploads. Initially, one test picked a random file from the `valid/` folder — this only caught format-specific bugs ~20% of the time.
