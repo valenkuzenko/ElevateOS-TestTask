@@ -1,94 +1,55 @@
-# Назва workflow — відображається у вкладці Actions на GitHub
 name: Playwright Tests
 
-# on — визначає КОЛИ цей workflow запускається
 on:
-  # push — коли хтось пушить код у гілку main
   push:
     branches: [main]
-
-  # pull_request — коли створюють або оновлюють PR в main
   pull_request:
     branches: [main]
-
-  # schedule — запуск за розкладом (як cron на сервері)
-  # Формат: хвилина(0) година(6) день_місяця(*) місяць(*) день_тижня(1-5)
-  # Тобто: о 06:00 UTC кожного робочого дня (пн-пт)
   schedule:
     - cron: '0 6 * * 1-5'
-
-  # workflow_dispatch — дозволяє запустити вручну через кнопку "Run workflow" в GitHub UI
   workflow_dispatch:
-    # inputs — параметри, які користувач обирає перед ручним запуском
     inputs:
       tag:
-        description: 'Test tag to run'  # Підпис біля поля вибору
-        required: true                  # Обов'язково обрати значення
-        type: choice                    # Тип поля — випадаючий список
-        options:                        # Варіанти для вибору
+        description: 'Test tag to run'
+        required: true
+        type: choice
+        options:
           - all
           - '@critical'
           - '@high'
           - '@medium'
 
-# jobs — окремі задачі, кожна запускається на своїй віртуальній машині
 jobs:
-
-  # ---------- Перша задача: critical тести ----------
   critical:
-    name: Critical tests              # Людська назва, видно в GitHub UI
-    runs-on: ubuntu-latest            # На якій ОС запускати (безкоштовна Ubuntu VM від GitHub)
-
-    # if — умова запуску цієї задачі
-    # > означає багаторядковий рядок у YAML (склеює рядки через пробіл)
-    # Логіка: запускай ЗАВЖДИ, окрім випадку коли це ручний запуск
-    # і користувач обрав НЕ 'all' і НЕ '@critical'
+    name: Critical tests
+    runs-on: ubuntu-latest
     if: >
       github.event_name != 'workflow_dispatch' ||
       inputs.tag == 'all' ||
       inputs.tag == '@critical'
-
-    # steps — послідовні кроки всередині задачі
     steps:
-      # Клонує репозиторій у робочу директорію VM
       - uses: actions/checkout@v4
-
-      # Встановлює Node.js потрібної версії
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      # npm ci — чиста установка залежностей строго за package-lock.json
-      # (на відміну від npm install, не оновлює lock-файл — надійніше для CI)
       - run: npm ci
-
-      # Завантажує браузер Chromium для Playwright
-      # --with-deps встановлює також системні бібліотеки (libX11, fonts тощо)
       - run: npx playwright install --with-deps chromium
-
-      # Запускає тести, --grep фільтрує за тегом у назві тесту
       - run: npx playwright test --grep @critical
-
-      # Зберігає HTML-звіт як артефакт (можна завантажити з GitHub Actions)
       - uses: actions/upload-artifact@v4
-        if: always()                  # always() — зберігати навіть якщо тести впали
+        if: always()
         with:
-          name: report-critical       # Назва артефакту для завантаження
-          path: playwright-report/    # Яку папку зберегти
-          retention-days: 14          # Зберігати 14 днів, потім автовидалення
+          name: report-critical
+          path: playwright-report/
+          retention-days: 14
 
-  # ---------- Друга задача: high тести ----------
   high:
     name: High tests
-    needs: critical                   # needs — НЕ запускати поки critical не пройде успішно
+    needs: critical
     runs-on: ubuntu-latest
-
-    # Та сама логіка: запускай завжди, окрім ручного запуску з іншим тегом
     if: >
       github.event_name != 'workflow_dispatch' ||
       inputs.tag == 'all' ||
       inputs.tag == '@high'
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -104,20 +65,13 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
-  # ---------- Третя задача: medium тести ----------
   medium:
     name: Medium tests
-    needs: high                       # Чекає на high, який чекає на critical → ланцюжок
-
+    needs: high
     runs-on: ubuntu-latest
-
-    # Інша логіка: НЕ запускається на push/PR — тільки:
-    # 1) за розкладом (schedule) — щоранку о 06:00
-    # 2) вручну (workflow_dispatch) якщо обрано 'all' або '@medium'
     if: >
       (github.event_name == 'schedule') ||
       (github.event_name == 'workflow_dispatch' && (inputs.tag == 'all' || inputs.tag == '@medium'))
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

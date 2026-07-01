@@ -95,18 +95,18 @@ npx playwright test --grep @critical --list
 ```
 tests/
 ├── fixtures/
-│   ├── base.fixture.ts        # Shared fixture — provides registrationPage to every test
-│   ├── user.fixture.ts        # Generates random user data using Faker
-│   └── images/                # Test avatar files (valid, oversized, wrong type)
+│   ├── base.fixture.ts          # Shared fixture — provides registrationPage to every test
+│   ├── user.fixture.ts          # Generates random user data using Faker
+│   └── images/                  # Test avatar files (valid, oversized, wrong type)
 ├── helpers/
-│   ├── avatar-type.enum.ts    # Avatar type constants (Valid, InvalidSize, InvalidType)
-│   └── error-messages.enum.ts # Expected error message strings
+│   ├── avatar-type.enum.ts      # Avatar type constants (Valid, InvalidSize, InvalidType)
+│   └── error-messages.enum.ts   # Expected error message strings
 ├── page-objects/
-│   ├── registration.page.ts   # Page Object for the registration form
-│   └── success.page.ts        # Page Object for the success confirmation page
-├── critical-positive.spec.ts  # @critical — happy-path registration flow
-├── field-validation.spec.ts   # @critical, @high — required fields and input validation
-└── avatar-upload.spec.ts      # @medium — file upload edge cases
+│   ├── registration.page.ts     # Page Object for the registration form
+│   └── success.page.ts          # Page Object for the success confirmation page
+├── critical-happy-path.spec.ts  # @critical — happy-path registration flow
+├── field-validation.spec.ts     # @critical, @high — required fields and input validation
+└── avatar-upload.spec.ts        # @medium — file upload edge cases
 ```
 
 ## CI/CD
