@@ -88,6 +88,17 @@ test.describe('Field Validation', () => {
         expect(message).toContain(ErrorMessage.BrowserEmailMissingDomain);
       });
 
+      await test.step('Browser validation — email with double @ is rejected', async () => {
+        await registrationPage.fillField('email', 'notanemail@@domain.com');
+
+        const validity = await registrationPage.getFieldValidityState('email');
+        expect(validity.typeMismatch).toBe(true);
+
+        const message = await registrationPage.getFieldValidationMessage('email');
+        console.log(`[Validation] Email browser validation message: "${message}"`);
+        expect(message).toContain(ErrorMessage.BrowserEmailDoubleAt);
+      });
+
       await test.step('Server validation — invalid email rejected', async () => {
         // Bypass browser-level email validation to test server-side
         await registrationPage.page.evaluate(() => {

@@ -12,4 +12,5 @@ export enum ErrorMessage {
   BrowserRequired = 'Please fill out this field.',
   BrowserEmailMissingAt = "Please include an '@' in the email address.",
   BrowserEmailMissingDomain = "Please enter a part following '@'.",
+  BrowserEmailDoubleAt = "A part following '@' should not contain the symbol '@'.",
 }
