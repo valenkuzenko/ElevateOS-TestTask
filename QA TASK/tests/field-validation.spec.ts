@@ -99,6 +99,28 @@ test.describe('Field Validation', () => {
         expect(message).toContain(ErrorMessage.BrowserEmailDoubleAt);
       });
 
+      await test.step('Browser validation — email with space before @ is rejected', async () => {
+        await registrationPage.fillField('email', 'not anemail@domain.com');
+
+        const validity = await registrationPage.getFieldValidityState('email');
+        expect(validity.typeMismatch).toBe(true);
+
+        const message = await registrationPage.getFieldValidationMessage('email');
+        console.log(`[Validation] Email browser validation message: "${message}"`);
+        expect(message).toContain(ErrorMessage.BrowserEmailSpaceBeforeAt);
+      });
+
+      await test.step('Browser validation — email with space after @ is rejected', async () => {
+        await registrationPage.fillField('email', 'notanemail@ domain.com');
+
+        const validity = await registrationPage.getFieldValidityState('email');
+        expect(validity.typeMismatch).toBe(true);
+
+        const message = await registrationPage.getFieldValidationMessage('email');
+        console.log(`[Validation] Email browser validation message: "${message}"`);
+        expect(message).toContain(ErrorMessage.BrowserEmailSpaceAfterAt);
+      });
+
       await test.step('Server validation — invalid email rejected', async () => {
         // Bypass browser-level email validation to test server-side
         await registrationPage.page.evaluate(() => {
