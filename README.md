@@ -8,7 +8,7 @@ Tests are split by priority using tags:
 
 | Tag | Coverage | File |
 |-----|----------|------|
-| `@critical` | Successful registration, required field validation | `critical-positive.spec.ts`, `field-validation.spec.ts` |
+| `@critical` | Successful registration, required field validation | `critical-happy-path.spec.ts`, `field-validation.spec.ts` |
 | `@high` | Email format, password mismatch, minimum length | `field-validation.spec.ts` |
 | `@medium` | Avatar upload — file size and type rejection | `avatar-upload.spec.ts` |
 
@@ -17,8 +17,8 @@ Tests are split by priority using tags:
 ### 1. Clone the repository
 
 ```bash
-git clone <repo-url>
-cd ElevateOS
+git clone https://github.com/valenkuzenko/ElevateOS-TestTask.git
+cd ElevateOS-TestTask
 ```
 
 ### 2. Install dependencies
@@ -56,7 +56,7 @@ npm run test:medium
 A single file:
 
 ```bash
-npx playwright test tests/critical-positive.spec.ts
+npx playwright test QA_TASK/tests/critical-happy-path.spec.ts
 ```
 
 ### 5. View the report
@@ -93,7 +93,7 @@ npx playwright test --grep @critical --list
 ## Project Structure
 
 ```
-tests/
+QA_TASK/
 ├── fixtures/
 │   ├── base.fixture.ts          # Shared fixture — provides registrationPage to every test
 │   ├── user.fixture.ts          # Generates random user data using Faker
@@ -104,9 +104,10 @@ tests/
 ├── page-objects/
 │   ├── registration.page.ts     # Page Object for the registration form
 │   └── success.page.ts          # Page Object for the success confirmation page
-├── critical-happy-path.spec.ts  # @critical — happy-path registration flow
-├── field-validation.spec.ts     # @critical, @high — required fields and input validation
-└── avatar-upload.spec.ts        # @medium — file upload edge cases
+└── tests/
+    ├── critical-happy-path.spec.ts  # @critical — happy-path registration flow
+    ├── field-validation.spec.ts     # @critical, @high — required fields and input validation
+    └── avatar-upload.spec.ts        # @medium — file upload edge cases
 ```
 
 ## CI/CD
