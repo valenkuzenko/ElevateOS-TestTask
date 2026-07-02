@@ -11,7 +11,7 @@ test.describe('Field Validation', () => {
     await registrationPage.solveSliderCaptcha();
 
     await test.step('Submit with all fields empty — firstName should be invalid', async () => {
-      await registrationPage.clickSubmit({ expectBrowserError: true });
+      await registrationPage.clickSubmit();
       expect(await registrationPage.isFieldValid('firstName')).toBe(false);
       const message = await registrationPage.getFieldValidationMessage('firstName');
       expect(message).toContain(ErrorMessage.BrowserRequired);
@@ -19,7 +19,7 @@ test.describe('Field Validation', () => {
 
     await test.step('Fill firstName, submit — lastName should be invalid', async () => {
       await registrationPage.fillField('firstName', user.firstName);
-      await registrationPage.clickSubmit({ expectBrowserError: true });
+      await registrationPage.clickSubmit();
       expect(await registrationPage.isFieldValid('lastName')).toBe(false);
       const message = await registrationPage.getFieldValidationMessage('lastName');
       expect(message).toContain(ErrorMessage.BrowserRequired);
@@ -27,7 +27,7 @@ test.describe('Field Validation', () => {
 
     await test.step('Fill lastName, submit — email should be invalid', async () => {
       await registrationPage.fillField('lastName', user.lastName);
-      await registrationPage.clickSubmit({ expectBrowserError: true });
+      await registrationPage.clickSubmit();
       expect(await registrationPage.isFieldValid('email')).toBe(false);
       const message = await registrationPage.getFieldValidationMessage('email');
       expect(message).toContain(ErrorMessage.BrowserRequired);
@@ -35,7 +35,7 @@ test.describe('Field Validation', () => {
 
     await test.step('Fill email, submit — password should be invalid', async () => {
       await registrationPage.fillField('email', user.email);
-      await registrationPage.clickSubmit({ expectBrowserError: true });
+      await registrationPage.clickSubmit();
       expect(await registrationPage.isFieldValid('password')).toBe(false);
       const message = await registrationPage.getFieldValidationMessage('password');
       expect(message).toContain(ErrorMessage.BrowserRequired);
@@ -43,7 +43,7 @@ test.describe('Field Validation', () => {
 
     await test.step('Fill password, submit — confirmPassword should be invalid', async () => {
       await registrationPage.fillField('password', user.password);
-      await registrationPage.clickSubmit({ expectBrowserError: true });
+      await registrationPage.clickSubmit();
       expect(await registrationPage.isFieldValid('confirmPassword')).toBe(false);
       const message = await registrationPage.getFieldValidationMessage('confirmPassword');
       expect(message).toContain(ErrorMessage.BrowserRequired);
@@ -51,7 +51,7 @@ test.describe('Field Validation', () => {
 
     await test.step('Fill confirmPassword, submit — all fields pass browser validation', async () => {
       await registrationPage.fillField('confirmPassword', user.confirmPassword);
-      await registrationPage.clickSubmit();
+      await registrationPage.submitFilledForm();
     });
   });
 
@@ -131,7 +131,7 @@ test.describe('Field Validation', () => {
         });
         await registrationPage.fillField('email', 'notanemail');
 
-        await registrationPage.clickSubmit({ expectServerError: true });
+        await registrationPage.clickSubmit();
 
         await expect(registrationPage.errorMessage).toHaveText(ErrorMessage.InvalidEmail);
       });
@@ -142,7 +142,7 @@ test.describe('Field Validation', () => {
       await registrationPage.fillField('password', user.password);
       await registrationPage.fillField('confirmPassword', 'different_password');
 
-      await registrationPage.clickSubmit({ expectServerError: true });
+      await registrationPage.clickSubmit();
 
       await expect(registrationPage.errorMessage).toHaveText(ErrorMessage.PasswordsMismatch);
     });
@@ -154,7 +154,7 @@ test.describe('Field Validation', () => {
       await registrationPage.fillField('password', shortPassword);
       await registrationPage.fillField('confirmPassword', shortPassword);
 
-      await registrationPage.clickSubmit({ expectServerError: true });
+      await registrationPage.clickSubmit();
 
       await expect(registrationPage.errorMessage).toHaveText(ErrorMessage.PasswordTooShort);
     });

@@ -77,10 +77,9 @@ await registrationPage.page.evaluate(() => {
 
 This lets `notanemail` pass browser validation and reach the server, where we assert the server's error message.
 
-The `clickSubmit()` method handles both flows via flags:
-- `{ expectBrowserError: true }` — clicks and returns without waiting for navigation
-- `{ expectServerError: true }` — clicks and reads the error message from the DOM
-- No flags — clicks and waits for a `/success` response
+Submit is split into two methods with no flags or branching:
+- `clickSubmit()` — clicks the button, expects nothing (validation tests use this)
+- `submitFilledForm()` — clicks and waits for a `/success` response (happy path tests use this)
 
 **Why we assert browser validation messages.** Messages like `"Please fill out this field."` or `"Please include an '@' in the email address."` come from Chromium, not from our application. They can change when the browser updates — and that's exactly why we assert them. These messages are what the end user sees. If Google changes the wording after a Chromium update, the team should know about it — because it affects the user experience even though it's not our code. When a test fails for this reason, the fix is straightforward: update the `ErrorMessage` enum, or implement custom validation messages in the application if the new browser wording doesn't meet UX requirements. We use `toContain()` instead of exact match because browser messages include dynamic parts (the actual input value), so we only check the stable portion to avoid unnecessary brittleness.
 

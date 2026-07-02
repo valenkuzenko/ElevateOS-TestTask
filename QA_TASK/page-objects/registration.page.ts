@@ -137,31 +137,22 @@ export class RegistrationPage {
     return text;
   }
 
-  async clickSubmit({ expectBrowserError = false, expectServerError = false } = {}) {
-    if (expectBrowserError) {
-      await this.submitButton.click();
-      console.log('[Submit] Browser validation blocked the submit');
-      return new SuccessPage(this.page);
-    }
-    if (expectServerError) {
-      await this.submitButton.click();
-      await this.getErrorMessage();
-      return new SuccessPage(this.page);
-    }
-    const [response] = await Promise.all([
-      this.page.waitForResponse((res) => res.url().includes('/success')),
-      this.submitButton.click(),
-    ]);
-    if (response.status() !== 200) {
-      const errorText = await this.getErrorMessage();
-      console.log(`[Submit] Server error: ${errorText}`);
-    }
+  async clickSubmit() {
+    await this.submitButton.click();
+  }
+
+  async submitFilledForm() {
+    const responsePromise = this.page.waitForResponse(
+      (res) => res.url().includes('/success'),
+    );
+    await this.submitButton.click();
+    await responsePromise;
     return new SuccessPage(this.page);
   }
 
   async registerUser(user: RegistrationUser) {
     await this.fillUserData(user);
     await this.solveSliderCaptcha();
-    return await this.clickSubmit();
+    return await this.submitFilledForm();
   }
 }
