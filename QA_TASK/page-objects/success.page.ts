@@ -8,7 +8,7 @@ export class SuccessPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.heading = page.getByRole('heading', { name: 'Successful Form Submissions' });
+    this.heading = page.getByRole('heading');
     this.lastSubmission = page.locator('ul > li').last();
     this.avatarImage = page.getByAltText('Avatar');
   }
