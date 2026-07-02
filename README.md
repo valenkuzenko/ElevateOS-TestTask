@@ -39,56 +39,11 @@ npx playwright install --with-deps chromium
 
 ### 4. Run the tests
 
-All tests at once:
-
 ```bash
 npm test
 ```
 
-By priority tag — useful when you only want to verify a specific level:
-
-```bash
-npm run test:critical
-npm run test:high
-npm run test:medium
-```
-
-A single file:
-
-```bash
-npx playwright test QA_TASK/tests/critical-happy-path.spec.ts
-```
-
-### 5. View the report
-
-After every run, Playwright generates an HTML report. Open it in your browser:
-
-```bash
-npx playwright show-report
-```
-
-This launches a local server and opens the report with detailed results, screenshots on failure, and trace files.
-
-## Other Ways to Run
-
-**Headed mode** — opens a visible browser window so you can watch the test interact with the page:
-
-```bash
-npx playwright test --headed
-```
-
-**UI mode** — an interactive interface with step-by-step execution, timeline, and DOM snapshots:
-
-```bash
-npx playwright test --ui
-```
-
-**List tests** without running them — handy to verify tag filtering:
-
-```bash
-npx playwright test --list
-npx playwright test --grep @critical --list
-```
+See [RUNNING.md](RUNNING.md) for all run modes (headed, UI, by tag, single file, reports).
 
 ## Project Structure
 
@@ -110,19 +65,24 @@ QA_TASK/
     └── avatar-upload.spec.ts        # @medium — file upload edge cases
 ```
 
-## CI/CD
+## Test Pipeline
 
 The GitHub Actions pipeline runs tests sequentially — each level waits for the previous one to pass:
 
-```
-@critical  ──>  @high  ──>  @medium
- (always)     (if critical passes)  (scheduled only)
+```mermaid
+flowchart LR
+    A["🔴 @critical<br/><i>always</i>"] -->|✅ passes| B["🟠 @high<br/><i>if critical passes</i>"]
+    B -->|✅ passes| C["🟡 @medium<br/><i>scheduled only</i>"]
+
+    style A fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#111
+    style B fill:#ffedd5,stroke:#ea580c,stroke-width:2px,color:#111
+    style C fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#111
 ```
 
-| Tag | When it runs | Condition |
-|-----|-------------|-----------|
-| `@critical` | every push / PR to `main` | always |
-| `@high` | every push / PR to `main` | after `@critical` passes |
+| Level | Trigger | Condition |
+|-------|---------|-----------|
+| `@critical` | every push / PR | always runs |
+| `@high` | every push / PR | after `@critical` passes |
 | `@medium` | weekdays at 06:00 UTC | after `@high` passes |
 
 If `@critical` fails, everything else is skipped — fast feedback, no wasted CI minutes.
@@ -135,12 +95,12 @@ Reports are uploaded as artifacts and retained for 14 days.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `ENVS` | Base URL of the application under test | `https://qa-task.redvike.rocks/` |
+| `ENV` | Base URL of the application under test | `https://qa-task.redvike.rocks/` |
 
-To run against a different environment locally, create a `.env` file in the project root:
+To run against a different environment locally, create a `.env` file in the project root (see `.env.example`):
 
 ```
-ENVS=https://staging.example.com/
+ENV=https://staging.example.com/
 ```
 
 This file is only used for local runs — CI uses its own environment variables.
