@@ -1,7 +1,9 @@
 import { test, expect } from '../fixtures/base.fixture';
-import { ErrorMessage } from '../helpers/error-messages.enum';
 import { randomUser } from '../fixtures/user.fixture';
+
 import { RegistrationUser } from '../page-objects/registration.page';
+
+import { ErrorMessage } from '../helpers/error-messages.enum';
 
 test.describe('Field Validation', () => {
   test('@critical Validation error when submitting with empty required fields', async ({ registrationPage }) => {

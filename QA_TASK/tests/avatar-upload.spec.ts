@@ -1,7 +1,8 @@
 import { test, expect } from '../fixtures/base.fixture';
+import { randomUser, allValidAvatars } from '../fixtures/user.fixture';
+
 import { ErrorMessage } from '../helpers/error-messages.enum';
 import { AvatarType } from '../helpers/avatar-type.enum';
-import { randomUser, allValidAvatars } from '../fixtures/user.fixture';
 
 test.describe('Avatar Upload Validation', () => {
   test.describe('Valid formats', () => {
