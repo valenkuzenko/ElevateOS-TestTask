@@ -72,11 +72,11 @@ flowchart LR
     style C fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#111
 ```
 
-| Level | Trigger | Condition |
-|-------|---------|-----------|
-| `@critical` | every push / PR | always runs |
-| `@high` | every push / PR | after `@critical` passes |
-| `@medium` | weekdays at 06:00 UTC | after `@high` passes |
+| Level | NPM | Grep | Trigger | Condition |
+|-------|-----|------|---------|-----------|
+| `@critical` | `npm run test:critical` | `npx playwright test --grep @critical` | every push / PR | always runs |
+| `@high` | `npm run test:high` | `npx playwright test --grep @high` | every push / PR | after `@critical` passes |
+| `@medium` | `npm run test:medium` | `npx playwright test --grep @medium` | weekdays at 06:00 UTC | after `@high` passes |
 
 If `@critical` fails, everything else is skipped — fast feedback, no wasted CI minutes.
 
