@@ -104,7 +104,7 @@ export class RegistrationPage {
     console.log(`[Upload] File set successfully: ${filePath}`);
   }
 
-  async isFieldValid(field: RegistrationFieldNames): Promise<boolean> {
+  async isFieldValid(field: RegistrationFieldNames) {
     const { valid, message } = await this.fieldLocators[field].evaluate((el) => {
       const input = el as HTMLInputElement;
       return { valid: input.checkValidity(), message: input.validationMessage };
@@ -125,7 +125,7 @@ export class RegistrationPage {
     });
   }
 
-  async getFieldValidationMessage(field: RegistrationFieldNames): Promise<string> {
+  async getFieldValidationMessage(field: RegistrationFieldNames) {
     return this.fieldLocators[field].evaluate(
       (el) => (el as HTMLInputElement).validationMessage,
     );
