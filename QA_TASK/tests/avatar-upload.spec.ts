@@ -30,7 +30,7 @@ test.describe('Avatar Upload Validation', () => {
     test('@medium Invalid file size rejected', async ({ registrationPage }) => {
       const user = randomUser(AvatarType.InvalidSize);
       await registrationPage.uploadAvatar(user.avatar!);
-      await registrationPage.clickSubmit({ expectServerError: true });
+      await registrationPage.clickSubmit();
 
       await expect(registrationPage.errorMessage).toHaveText(ErrorMessage.FileSizeTooLarge);
     });
@@ -38,7 +38,7 @@ test.describe('Avatar Upload Validation', () => {
     test('@medium Invalid file type rejected', async ({ registrationPage }) => {
       const user = randomUser(AvatarType.InvalidType);
       await registrationPage.uploadAvatar(user.avatar!);
-      await registrationPage.clickSubmit({ expectServerError: true });
+      await registrationPage.clickSubmit();
 
       await expect(registrationPage.errorMessage).toHaveText(ErrorMessage.InvalidFileType);
     });
