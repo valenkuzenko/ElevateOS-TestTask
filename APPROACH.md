@@ -26,7 +26,7 @@ For this project specifically, Playwright was the best fit because:
 
 ### Page Object Model
 
-Each page has a dedicated class (`RegistrationPage`, `SuccessPage`) that encapsulates locators and actions. Tests read like scenarios — `registerUser(user)`, `fillField('email', value)`, `slideToUnlock()` — without any CSS selectors or DOM logic leaking into spec files.
+Each page has a dedicated class (`RegistrationPage`, `SuccessPage`) that encapsulates locators and actions. Tests read like scenarios — `registerUser(user)`, `fillField('email', value)`, `solveSliderCaptcha()` — without any CSS selectors or DOM logic leaking into spec files.
 
 ### Data generation with Faker
 
@@ -35,11 +35,11 @@ Every test generates a fresh random user via `randomUser()` using `@faker-js/fak
 - Conflicts between parallel workers sharing the same data
 - Flaky "duplicate user" errors on the server
 
-### Slider unlock — strict comparison workaround
+### Slider captcha — strict comparison workaround
 
-The registration form has a "slide to submit" captcha. The slider JS uses a **strict equality check** (`===`) to determine if the thumb reached the end. A simple drag to `trackWidth` often lands 1-2px short due to browser rounding, leaving the slider locked.
+The registration form has a slider captcha. The slider JS uses a **strict equality check** (`===`) to determine if the thumb reached the end. A simple drag to `trackWidth` often lands 1-2px short due to browser rounding, leaving the slider locked.
 
-Solution in `slideToUnlock()`:
+Solution in `solveSliderCaptcha()`:
 1. `scrollIntoViewIfNeeded()` — ensures bounding boxes are accurate after any page scroll
 2. Start the drag 5px from the left edge of the thumb (not center) — guarantees `mousedown` hits the element
 3. **Overshoot by 10px** past the track end — the slider JS clamps the position to max, which reliably triggers the `=== end` unlock condition

@@ -24,7 +24,7 @@ test.describe('Avatar Upload Validation', () => {
     test.beforeEach(async ({ registrationPage }) => {
       const user = randomUser();
       await registrationPage.fillUserData(user);
-      await registrationPage.slideToUnlock();
+      await registrationPage.solveSliderCaptcha();
     });
 
     test('@medium Invalid file size rejected', async ({ registrationPage }) => {
