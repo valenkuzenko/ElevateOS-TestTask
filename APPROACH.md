@@ -163,6 +163,7 @@ The `.github/workflows/playwright.yml` is included as a **sample** to demonstrat
 ```
 
 Key points:
+- Each job runs inside the official Playwright Docker container (`mcr.microsoft.com/playwright`) — no manual browser install, consistent environment
 - `needs:` creates dependencies between jobs — if `@critical` fails, `@high` and `@medium` are skipped
 - `@medium` edge-case tests only run on schedule (weekdays 06:00 UTC) or manual dispatch — keeps PR checks fast
 - `workflow_dispatch` with a tag dropdown allows manual runs of any level or all at once

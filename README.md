@@ -21,26 +21,19 @@ git clone https://github.com/valenkuzenko/ElevateOS-TestTask.git
 cd ElevateOS-TestTask
 ```
 
-### 2. Install dependencies
-
-This pulls in Playwright, Faker, and other packages defined in `package.json`:
+### 2. Install and run
 
 ```bash
 npm install
-```
-
-### 3. Install the browser
-
-Playwright needs a real browser binary to run tests. This downloads Chromium along with its system-level dependencies (fonts, graphics libraries, etc.):
-
-```bash
 npx playwright install --with-deps chromium
+npm test
 ```
 
-### 4. Run the tests
+Or with Docker (no local browser install needed):
 
 ```bash
-npm test
+docker build -t elevateos-tests .
+docker run elevateos-tests
 ```
 
 See [RUNNING.md](RUNNING.md) for all run modes (headed, UI, by tag, single file, reports).

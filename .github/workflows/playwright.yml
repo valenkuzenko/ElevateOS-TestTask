@@ -23,17 +23,15 @@ jobs:
   critical:
     name: Critical tests
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     if: >
       github.event_name != 'workflow_dispatch' ||
       inputs.tag == 'all' ||
       inputs.tag == '@critical'
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - run: npx playwright test --grep @critical
       - uses: actions/upload-artifact@v4
         if: always()
@@ -46,17 +44,15 @@ jobs:
     name: High tests
     needs: critical
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     if: >
       github.event_name != 'workflow_dispatch' ||
       inputs.tag == 'all' ||
       inputs.tag == '@high'
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - run: npx playwright test --grep @high
       - uses: actions/upload-artifact@v4
         if: always()
@@ -69,16 +65,14 @@ jobs:
     name: Medium tests
     needs: high
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     if: >
       (github.event_name == 'schedule') ||
       (github.event_name == 'workflow_dispatch' && (inputs.tag == 'all' || inputs.tag == '@medium'))
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - run: npx playwright test --grep @medium
       - uses: actions/upload-artifact@v4
         if: always()
