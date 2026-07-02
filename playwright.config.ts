@@ -28,7 +28,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1024, height: 1500 },
-        baseURL: process.env.ENVS || "https://qa-task.redvike.rocks/",
+        baseURL: process.env.ENV || "https://qa-task.redvike.rocks/",
       },
     },
   ],
