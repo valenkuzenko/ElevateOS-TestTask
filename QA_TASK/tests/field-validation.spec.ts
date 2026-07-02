@@ -8,7 +8,7 @@ import { ErrorMessage } from '../helpers/error-messages.enum';
 test.describe('Field Validation', () => {
   test('@critical Validation error when submitting with empty required fields', async ({ registrationPage }) => {
     const user = randomUser();
-    await registrationPage.slideToUnlock();
+    await registrationPage.solveSliderCaptcha();
 
     await test.step('Submit with all fields empty — firstName should be invalid', async () => {
       await registrationPage.clickSubmit({ expectBrowserError: true });
@@ -62,7 +62,7 @@ test.describe('Field Validation', () => {
       user = randomUser();
       await registrationPage.fillField('firstName', user.firstName);
       await registrationPage.fillField('lastName', user.lastName);
-      await registrationPage.slideToUnlock();
+      await registrationPage.solveSliderCaptcha();
     });
 
     test('@high Validation error for invalid email format', async ({ registrationPage }) => {

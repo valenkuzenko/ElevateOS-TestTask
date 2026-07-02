@@ -16,11 +16,9 @@ export type RegistrationUser = {
 export class RegistrationPage {
   readonly page: Page;
   readonly fieldLocators: Record<RegistrationFieldNames, Locator>;
-  readonly slideToSubmitLabel: Locator;
   readonly submitButton: Locator;
-  readonly captchaReminder: Locator;
-  readonly sliderTrack: Locator;
-  readonly sliderThumb: Locator;
+  readonly sliderCaptchaTrack: Locator;
+  readonly sliderCaptchaThumb: Locator;
   readonly avatarUploadInput: Locator;
   readonly errorMessage: Locator;
 
@@ -33,11 +31,9 @@ export class RegistrationPage {
       password: page.locator('input[name="password"]'),
       confirmPassword: page.locator('input[name="confirm_password"]'),
     };
-    this.slideToSubmitLabel = page.getByText('Slide to Submit');
     this.submitButton = page.getByRole('button', { name: 'Submit' });
-    this.captchaReminder = page.getByText('Please solve the captcha!');
-    this.sliderTrack = page.locator('#slider-track');
-    this.sliderThumb = page.locator('#slider-thumb');
+    this.sliderCaptchaTrack = page.locator('#slider-track');
+    this.sliderCaptchaThumb = page.locator('#slider-thumb');
     this.avatarUploadInput = page.locator('input[type="file"]');
     this.errorMessage = page.locator('ul > li');
   }
@@ -64,28 +60,42 @@ export class RegistrationPage {
     }
   }
 
-  async slideToUnlock() {
-    // Scroll into view first to get accurate bounding boxes after any page scroll
-    await this.sliderThumb.scrollIntoViewIfNeeded();
-    const thumbBox = await this.sliderThumb.boundingBox();
-    const trackBox = await this.sliderTrack.boundingBox();
+  async solveSliderCaptcha() {
+    const { startX, startY, distance } = await this.getSliderCaptchaPositions();
+    await this.grabSliderCaptchaThumb(startX, startY);
+    await this.dragSliderCaptchaThumbToEnd(startX, startY, distance);
+    await this.releaseSliderCaptchaThumb();
+  }
+
+  private async getSliderCaptchaPositions() {
+    await this.sliderCaptchaThumb.scrollIntoViewIfNeeded();
+    const thumbBox = await this.sliderCaptchaThumb.boundingBox();
+    const trackBox = await this.sliderCaptchaTrack.boundingBox();
     if (!trackBox || !thumbBox) {
-      throw new Error('Slider elements not found on the page');
+      throw new Error('Slider captcha elements not found on the page');
     }
+    return {
+      startX: thumbBox.x + 5,
+      startY: thumbBox.y + thumbBox.height / 2,
+      distance: trackBox.width - thumbBox.width,
+    };
+  }
 
-    // Start near the left edge of the thumb to ensure mousedown lands on the element
-    const startX = thumbBox.x + 5;
-    const startY = thumbBox.y + thumbBox.height / 2;
-    const distance = trackBox.width - thumbBox.width;
-
-    await this.page.mouse.move(startX, startY);
+  private async grabSliderCaptchaThumb(x: number, y: number) {
+    await this.page.mouse.move(x, y);
     await this.page.mouse.down();
+  }
+
+  private async dragSliderCaptchaThumbToEnd(startX: number, startY: number, distance: number) {
     // Overshoot by 10px — the slider JS clamps position to max, triggering the === end unlock check.
     // Use ~1px per step (min 20) so the mousemove events reliably hit the exact end value.
     await this.page.mouse.move(startX + distance + 10, startY, { steps: Math.max(distance, 20) });
+  }
+
+  private async releaseSliderCaptchaThumb() {
     await this.page.mouse.up();
-    const thumbText = await this.sliderThumb.textContent();
-    console.log(`[Slider] Status: ${thumbText}`);
+    const thumbText = await this.sliderCaptchaThumb.textContent();
+    console.log(`[SliderCaptcha] Status: ${thumbText}`);
   }
 
   async uploadAvatar(filePath: string) {
@@ -149,13 +159,9 @@ export class RegistrationPage {
     return new SuccessPage(this.page);
   }
 
-  async clickCaptchaReminder() {
-    await this.captchaReminder.click();
-  }
-
   async registerUser(user: RegistrationUser) {
     await this.fillUserData(user);
-    await this.slideToUnlock();
+    await this.solveSliderCaptcha();
     return await this.clickSubmit();
   }
 }
